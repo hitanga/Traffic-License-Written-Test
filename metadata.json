@@ -1,6 +1,6 @@
 {
   "name": "Nepal Driving License Written Test Examination System",
-  "description": "A professional government-inspired prep and examination platform for the Nepal Learning Driving License Written Test (Nepali & English support).",
+  "description": "A professional educational preparation and self-evaluation platform for the Nepal Learning Driving License Written Test (Nepali & English support).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

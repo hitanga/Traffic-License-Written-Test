@@ -150,17 +150,6 @@ export default function App() {
 
           {/* Controls Panel */}
           <div className="flex items-center space-x-2.5">
-            {/* View History Button */}
-            {screen !== 'exam' && (
-              <button
-                id="view_history_button"
-                onClick={() => setShowHistory(true)}
-                className="p-2.5 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-800 rounded-xl transition-all cursor-pointer flex items-center gap-2 text-xs font-bold"
-              >
-                <History className="w-4.5 h-4.5 text-slate-500" />
-                <span className="hidden sm:inline">{t.view_history_btn}</span>
-              </button>
-            )}
 
             {/* Language Toggle Button */}
             <button
@@ -244,7 +233,7 @@ export default function App() {
       {/* SYSTEM FOOTER */}
       <footer className="mt-auto text-center text-slate-400 text-xs py-6 px-4 border-t border-slate-200/60 font-semibold space-y-2 print:hidden">
         <div className="flex items-center justify-center space-x-1">
-          <span>{t.dept_transport} © 2026. All Rights Reserved.</span>
+          <span>{t.app_title} © 2026. All Rights Reserved.</span>
         </div>
         <p className="max-w-xl mx-auto text-[10px] text-slate-400 leading-relaxed font-medium">
           Disclaimer: This online written exam prep portal is designed for candidate educational self-evaluation and licensing pre-qualification practice only. All curriculum details, traffic signal symbols, and score valuations strictly mirror Nepalese transport guidelines.

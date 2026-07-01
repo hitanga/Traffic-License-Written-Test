@@ -5,11 +5,11 @@
 
 export const TRANSLATIONS = {
   ne: {
-    gov_nepal: "नेपाल सरकार",
-    ministry_transport: "भौतिक पूर्वाधार तथा यातायात मन्त्रालय",
-    dept_transport: "यातायात व्यवस्था विभाग",
-    app_title: "नेपाल सवारी चालक अनुमति पत्र लिखित परीक्षा प्रणाली",
-    app_subtitle: "NEPAL DRIVING LICENSE WRITTEN TEST EXAMINATION SYSTEM",
+    gov_nepal: "लाइसेन्स तयारी पोर्टल",
+    ministry_transport: "सवारी चालक अनुमति पत्र परीक्षा तयारी प्रणाली",
+    dept_transport: "लिखित परीक्षा अभ्यास केन्द्र",
+    app_title: "सवारी चालक अनुमति पत्र लिखित परीक्षा अभ्यास प्रणाली",
+    app_subtitle: "DRIVING LICENSE WRITTEN TEST PREPARATION SYSTEM",
     candidate_registration: "परीक्षार्थी दर्ता",
     full_name: "पूरा नाम",
     full_name_placeholder: "आफ्नो पूरा नाम अंग्रेजी वा नेपालीमा लेख्नुहोस्",
@@ -42,7 +42,7 @@ export const TRANSLATIONS = {
       "घडीको समय समाप्त भएमा परीक्षा स्वतः सबमिट हुनेछ। समय अगावै पनि बुझाउन सकिन्छ।",
       "प्रत्येक पटक परीक्षा सुरु गर्दा नयाँ, परिमार्जित र अनियमित क्रममा प्रश्नहरू सिर्जना हुनेछन्।",
       "सही उत्तर दिइएका प्रश्नहरू हरियो र अनुत्तरित प्रश्नहरू खैरो वा रातो रङमा देखिनेछन्।",
-      "सवारी चिन्ह र नियम सम्बन्धी सम्पूर्ण प्रश्नहरू विभागको पाठ्यक्रममा आधारित छन्।"
+      "सवारी चिन्ह र नियम सम्बन्धी सम्पूर्ण प्रश्नहरू आधिकारिक पाठ्यक्रममा आधारित छन्।"
     ],
     start_button_large: "लिखित परीक्षा सुरु गर्नुहोस्",
     remaining_time: "बाँकी समय",
@@ -86,11 +86,11 @@ export const TRANSLATIONS = {
     feedback_fail: "निराश नहुनुहोस्! थप अभ्यासले सफलता अवश्य मिल्छ।"
   },
   en: {
-    gov_nepal: "Government of Nepal",
-    ministry_transport: "Ministry of Physical Infrastructure and Transport",
-    dept_transport: "Department of Transport Management",
-    app_title: "Nepal Driving License Written Test Examination System",
-    app_subtitle: "नेपाल सवारी चालक अनुमति पत्र लिखित परीक्षा प्रणाली",
+    gov_nepal: "License Prep Portal",
+    ministry_transport: "Driving License Exam Preparation System",
+    dept_transport: "Written Exam Practice Center",
+    app_title: "Driving License Written Test Practice System",
+    app_subtitle: "सवारी चालक अनुमति पत्र लिखित परीक्षा अभ्यास प्रणाली",
     candidate_registration: "Candidate Registration",
     full_name: "Full Name",
     full_name_placeholder: "Enter your full name in block letters",
