@@ -760,6 +760,557 @@ export const QUESTIONS_DATABASE: Question[] = [
   }
 ];
 
+// ==========================================
+// PROGRAMMATIC DYNAMIC QUESTION GENERATOR
+// ==========================================
+function generateDynamicQuestions(): Question[] {
+  const list: Question[] = [];
+
+  // --- SUB-GENERATOR 1: Speed Limits ---
+  const speedVehicles = [
+    { en: 'a scooter', ne: 'स्कूटर' },
+    { en: 'an electric car', ne: 'इलेक्ट्रिक कार' },
+    { en: 'a public minibus', ne: 'सार्वजनिक मिनीबस' },
+    { en: 'a heavy tipper truck', ne: 'भारी टिपर ट्रक' }
+  ];
+  
+  const speedLocations = [
+    { en: 'near a national park wildlife crossing', ne: 'राष्ट्रिय निकुञ्जको वन्यजन्तु क्रसिङ नजिक', speed: 30 },
+    { en: 'on a wet, rainy highway', ne: 'पानी परिरहेको चिप्लो राजमार्गमा', speed: 50 },
+    { en: 'inside a narrow road tunnel', ne: 'साँघुरो सडक सुरुङ्ग मार्ग भित्र', speed: 40 },
+    { en: 'on an elevated flyover bridge', ne: 'फ्लाइओभर पुल माथि', speed: 40 },
+    { en: 'through a dense, foggy highway', ne: 'बाक्लो कुहिरो लागेको राजमार्गमा', speed: 30 },
+    { en: 'on a narrow gravel village road', ne: 'साँघुरो कच्ची ग्रामीण सडकमा', speed: 20 }
+  ];
+  
+  speedVehicles.forEach((v, vIndex) => {
+    speedLocations.forEach((loc, locIndex) => {
+      const id = `gen_speed_${vIndex}_${locIndex}`;
+      list.push({
+        id,
+        category: 'traffic_rules',
+        questionText: {
+          en: `What is the recommended safe speed limit for ${v.en} while driving ${loc.en}?`,
+          ne: `${loc.ne} मा ${v.ne} चलाउँदा सुरक्षित रहने तोकिएको वा सिफारिस गरिएको गति सीमा कति हो?`
+        },
+        options: {
+          en: [
+            `${loc.speed} km/h`,
+            `${loc.speed + 15} km/h`,
+            `${loc.speed + 30} km/h`,
+            `10 km/h`
+          ],
+          ne: [
+            `${loc.speed} किमी/घण्टा`,
+            `${loc.speed + 15} किमी/घण्टा`,
+            `${loc.speed + 30} किमी/घण्टा`,
+            `१० किमी/घण्टा`
+          ]
+        },
+        correctIndex: 0
+      });
+    });
+  });
+
+  // --- SUB-GENERATOR 2: License Categories & Registration ---
+  const licenseVehicles = [
+    { code: 'Category A', nameEn: 'Electric Scooter', nameNe: 'इलेक्ट्रिक स्कूटर', category: 'A' },
+    { code: 'Category B', nameEn: 'Electric Jeep', nameNe: 'इलेक्ट्रिक जीप', category: 'B' },
+    { code: 'Category D', nameEn: 'Power Tiller agricultural tractor', nameNe: 'पावर टिलर कृषि ट्याक्टर', category: 'D' },
+    { code: 'Category C', nameEn: 'Three-wheeler Auto Tempo', nameNe: 'तीन पाङ्ग्रे टेम्पो अटो', category: 'C' },
+    { code: 'Category E', nameEn: 'Farm Tractor', nameNe: 'कृषि कार्यमा प्रयोग हुने ट्याक्टर', category: 'E' },
+    { code: 'Category F', nameEn: 'Delivery Minitruck', nameNe: 'डेलिभरी मिनीट्रक', category: 'F' },
+    { code: 'Category G', nameEn: 'Standard Public Passenger Bus', nameNe: 'सार्वजनिक ठूलो बस', category: 'G' },
+    { code: 'Category H', nameEn: 'Road Roller machine', nameNe: 'सडक पिच गर्ने रोड रोलर', category: 'H' }
+  ];
+
+  licenseVehicles.forEach((v, vIndex) => {
+    // Question 1: Class category
+    list.push({
+      id: `gen_lic_cat_${vIndex}`,
+      category: 'traffic_rules',
+      questionText: {
+        en: `Under Nepal regulations, which driving license category is required to legally drive ${v.nameEn}?`,
+        ne: `नेपालको नियम अनुसार, ${v.nameNe} कानुनी रूपमा चलाउनका लागि कुन वर्ग (Category) को अनुमति पत्र आवश्यक पर्दछ?`
+      },
+      options: {
+        en: [`${v.code}`, `Category Z`, `Category M`, `No license required`],
+        ne: [`${v.code}`, `वर्ग Z`, `वर्ग M`, `लाइसेन्स आवश्यक पर्दैन`]
+      },
+      correctIndex: 0
+    });
+
+    // Question 2: Renew cycle
+    list.push({
+      id: `gen_lic_renew_${vIndex}`,
+      category: 'traffic_rules',
+      questionText: {
+        en: `What is the standard interval for renewing the vehicle ownership tax and registration of ${v.nameEn} in Nepal?`,
+        ne: `नेपालमा ${v.nameNe} को स्वामित्व कर तिर्ने र सवारी दर्ता किताब नवीकरण गर्ने मानक समयावधि कति हो?`
+      },
+      options: {
+        en: ['Every year (annually)', 'Every 5 years', 'Once every 10 years', 'No renewal needed'],
+        ne: ['प्रत्येक वर्ष (वार्षिक रूपमा)', 'प्रत्येक ५ वर्षमा', 'प्रत्येक १० वर्षमा', 'नवीकरण गर्न आवश्यक छैन']
+      },
+      correctIndex: 0
+    });
+  });
+
+  // --- SUB-GENERATOR 3: Clearance distances ---
+  const distanceObjects = [
+    { nameEn: 'a fire hydrant outlet', nameNe: 'फायर हाइड्रेन्ट (दमकल पानी बिन्दु)', dist: 5 },
+    { nameEn: 'a pedestrian zebra crossing', nameNe: 'जेब्रा क्रसिङ (पैदलयात्री क्रसिङ)', dist: 10 },
+    { nameEn: 'a busy road intersection corner', nameNe: 'व्यस्त सडक चौबाटो वा मोडको छेउ', dist: 10 },
+    { nameEn: 'a designated passenger bus stop', nameNe: 'तोकिएको सार्वजनिक बस विसौनी क्षेत्र', dist: 15 },
+    { nameEn: 'a hospital main entrance gate', nameNe: 'अस्पतालको मुख्य प्रवेशद्वार', dist: 10 },
+    { nameEn: 'a school main gate', nameNe: 'विद्यालयको मुख्य गेट', dist: 10 },
+    { nameEn: 'a highway bridge entrance', nameNe: 'राजमार्गको पुलको प्रवेशद्वार', dist: 15 },
+    { nameEn: 'a level railway crossing gate', nameNe: 'रेल्वे लेभल क्रसिङको ढोका', dist: 20 }
+  ];
+
+  distanceObjects.forEach((obj, objIndex) => {
+    list.push({
+      id: `gen_dist_park_${objIndex}`,
+      category: 'traffic_rules',
+      questionText: {
+        en: `According to Nepal standards, within how many meters of ${obj.nameEn} is parking strictly prohibited?`,
+        ne: `नेपालको मापदण्ड अनुसार, ${obj.nameNe} बाट कति मिटर भित्र सवारी साधन पार्किङ गर्न कडा रूपमा निषेध गरिएको छ?`
+      },
+      options: {
+        en: [
+          `${obj.dist} meters`,
+          `${obj.dist + 10} meters`,
+          `2 meters`,
+          `No distance restriction`
+        ],
+        ne: [
+          `${obj.dist} मिटर`,
+          `${obj.dist + 10} मिटर`,
+          `२ मिटर`,
+          `कुनै दूरी सीमा छैन`
+        ]
+      },
+      correctIndex: 0
+    });
+
+    list.push({
+      id: `gen_dist_stop_${objIndex}`,
+      category: 'road_safety',
+      questionText: {
+        en: `When stopping your vehicle behind another in heavy traffic near ${obj.nameEn}, what minimum clearance distance is recommended?`,
+        ne: `व्यस्त ट्राफिकमा ${obj.nameNe} नजिक अर्को सवारी साधनको पछाडि रोकिँदा कम्तिमा कति दूरीको खाली ठाउँ छोड्न सिफारिस गरिन्छ?`
+      },
+      options: {
+        en: [
+          `At least 2 to 3 meters (so rear tires are visible)`,
+          `Exactly 10 centimeters`,
+          `At least 15 meters`,
+          `Clearance is not needed`
+        ],
+        ne: [
+          `कम्तिमा २ देखि ३ मिटर (अगाडिको गाडीको पछाडिको टायर देखिने गरी)`,
+          `ठीक १० सेन्टिमिटर`,
+          `कम्तिमा १५ मिटर`,
+          `दूरी छोड्नु आवश्यक छैन`
+        ]
+      },
+      correctIndex: 0
+    });
+  });
+
+  // --- SUB-GENERATOR 4: Traffic Signals ---
+  const trafficSignals = [
+    {
+      lightEn: 'flashing red traffic signal light',
+      lightNe: 'झिझिम गरिरहेको (फ्लासिङ) रातो ट्राफिक बत्ती',
+      actionEn: 'Stop completely, check for safety, and proceed when the way is clear',
+      actionNe: 'पूर्ण रूपमा रोकिने, बाटो सुरक्षित छ भनी जाँच गर्ने र बाटो खाली भएपछि अगाडि बढ्ने'
+    },
+    {
+      lightEn: 'flashing yellow traffic signal light',
+      lightNe: 'झिझिम गरिरहेको (फ्लासिङ) पहेंलो ट्राफिक बत्ती',
+      actionEn: 'Slow down and proceed with extreme caution and alertness',
+      actionNe: 'गति कम गर्ने र अत्यधिक सावधानीका साथ चनाखो भई अगाडि बढ्ने'
+    },
+    {
+      lightEn: 'steady red arrow signal pointing left',
+      lightNe: 'स्थिर रातो बायाँतर्फ देखाउने तीर बत्ती',
+      actionEn: 'Wait and do not turn left until the signal turns green',
+      actionNe: 'प्रतीक्षा गर्ने र संकेत बत्ती हरियो नभएसम्म बायाँ नमोडिने'
+    },
+    {
+      lightEn: 'steady green arrow signal pointing right',
+      lightNe: 'स्थिर हरियो दायाँतर्फ देखाउने तीर बत्ती',
+      actionEn: 'Right turn permitted with appropriate right-of-way priority',
+      actionNe: 'दायाँ मोड्न सुरक्षित रूपमा प्राथमिकताका साथ अनुमति छ'
+    },
+    {
+      lightEn: 'steady red pedestrian figure light',
+      lightNe: 'पैदलयात्री संकेतको स्थिर रातो मानिस बत्ती',
+      actionEn: 'Pedestrians must wait on the sidewalk and not cross the road',
+      actionNe: 'पैदलयात्रीहरू सडक पेटीमै पर्खनुपर्छ र बाटो काट्नु हुँदैन'
+    }
+  ];
+
+  const signalContexts = [
+    { en: 'at a busy multi-lane highway junction', ne: 'व्यस्त बहु-लेन राजमार्गको चौबाटोमा' },
+    { en: 'in an urban residential neighborhood crossroad', ne: 'सहरी आवासीय क्षेत्रको चौबाटोमा' },
+    { en: 'during heavy rainy conditions at a city square', ne: 'सहरको चोकमा भारी वर्षा भइरहेको बेला' },
+    { en: 'at a quiet intersection during late night hours', ne: 'अँध्यारो मध्यरातको समयमा सुनसान चौबाटोमा' }
+  ];
+
+  trafficSignals.forEach((sig, sigIndex) => {
+    signalContexts.forEach((ctx, ctxIndex) => {
+      list.push({
+        id: `gen_sig_${sigIndex}_${ctxIndex}`,
+        category: 'traffic_symbols',
+        questionText: {
+          en: `When encountering a ${sig.lightEn} ${ctx.en}, what is the correct driver action?`,
+          ne: `${ctx.ne} मा ${sig.lightNe} देख्दा चालकले गर्नुपर्ने सही निर्णय के हो?`
+        },
+        options: {
+          en: [
+            `${sig.actionEn}`,
+            `Ignore the light and proceed immediately`,
+            `Stop and turn off the vehicle engine completely`,
+            `Sound the horn continuously to clear traffic`
+          ],
+          ne: [
+            `${sig.actionNe}`,
+            `संकेतलाई बेवास्ता गरी तुरुन्तै अगाडि बढ्ने`,
+            `रोकिने र सवारी साधनको इन्जिन पूर्ण रूपमा बन्द गर्ने`,
+            `ट्राफिक खाली गराउन लगातार हर्न बजाउने`
+          ]
+        },
+        correctIndex: 0
+      });
+    });
+  });
+
+  // --- SUB-GENERATOR 5: Component Functions ---
+  const carComponents = [
+    { nameEn: 'radiator pressure cap', nameNe: 'रेडिएटर प्रेसर बिर्को (Cap)', funcEn: 'To seal and maintain correct pressure in the engine cooling system', funcNe: 'इन्जिन कुलिङ प्रणालीमा सही दबाब (प्रेसर) कायम राख्न र सिल गर्न' },
+    { nameEn: 'engine air filter', nameNe: 'इन्जिन एयर फिल्टर', funcEn: 'To filter out dust and debris from entering combustion cylinders', funcNe: 'इन्जिन दहन सिलिन्डर भित्र धुलो र फोहोरका कणहरू पस्नबाट रोक्न' },
+    { nameEn: 'ignition spark plug', nameNe: 'इन्जिन स्पार्क प्लग', funcEn: 'To ignite the compressed air-fuel mixture in petrol engines', funcNe: 'पेट्रोल इन्जिनमा संकुचित इन्धन र हावाको मिश्रणलाई प्रज्वलित गर्न' },
+    { nameEn: 'engine fuel filter', nameNe: 'इन्जिन फ्युल फिल्टर', funcEn: 'To screen out contaminants and particles from entering the fuel lines', funcNe: 'इन्धनका पाइपहरूमा फोहोर र ठोस कणहरू प्रवेश गर्नबाट रोक्न' },
+    { nameEn: 'disc brake pads', nameNe: 'डिस्क ब्रेक प्याड', funcEn: 'To clamp against the brake rotor and generate slowing friction', funcNe: 'ब्रेक रोटरमा बलियोसँग समातेर गति कम गर्ने घर्षण उत्पन्न गराउन' },
+    { nameEn: 'battery alternator', nameNe: 'ब्याट्री अल्टरनेटर', funcEn: 'To charge the car battery and power electrical equipment when running', funcNe: 'इन्जिन चल्दा गाडीको ब्याट्री चार्ज गर्न र विद्युतीय उपकरणहरूलाई उर्जा दिन' },
+    { nameEn: 'catalytic converter', nameNe: 'क्याटालिटिक कन्भर्टर', funcEn: 'To convert toxic engine exhaust pollutants into less harmful gases', funcNe: 'इन्जिनबाट निस्कने विषाक्त ग्याँसहरूलाई कम हानिकारक ग्याँसमा परिणत गर्न' },
+    { nameEn: 'suspension shock absorbers', nameNe: 'सस्पेन्सन शक एब्जर्भरहरू', funcEn: 'To dampen road shock and keep vehicle tires in constant road contact', funcNe: 'सडकका खाल्डाखुल्डीको धक्का कम गर्न र टायरलाई सडकमै टिकाइराख्न' },
+    { nameEn: 'electrical safety fuses', nameNe: 'विद्युतीय सुरक्षा फ्युजहरू', funcEn: 'To break the circuit in case of excessive current to protect electronics', funcNe: 'अत्यधिक विद्युत प्रवाह हुँदा सर्किट विच्छेद गरी विद्युतीय उपकरण जोगाउन' },
+    { nameEn: 'gearbox transmission system', nameNe: 'गियरबक्स ट्रान्समिशन प्रणाली', funcEn: 'To transfer engine power and torque to the driving wheels efficiently', funcNe: 'इन्जिनको शक्ति र टर्कलाई ड्राइभिङ पाङ्ग्राहरूमा कुशलतापूर्वक स्थानान्तरण गर्न' }
+  ];
+
+  carComponents.forEach((comp, compIndex) => {
+    // Function question
+    list.push({
+      id: `gen_comp_func_${compIndex}`,
+      category: 'driving_knowledge',
+      questionText: {
+        en: `What is the primary operational function of the ${comp.nameEn} in a standard vehicle?`,
+        ne: `एक सामान्य सवारी साधनमा ${comp.nameNe} को मुख्य कार्य के हो?`
+      },
+      options: {
+        en: [
+          `${comp.funcEn}`,
+          `To increase the maximum speed of the engine`,
+          `To decrease fuel consumption to zero`,
+          `To control the steering and alignment of front wheels`
+        ],
+        ne: [
+          `${comp.funcNe}`,
+          `इन्जिनको अधिकतम गति बढाउन`,
+          `इन्धन खपतलाई शून्यमा झार्न`,
+          `अगाडिको पाङ्ग्राको स्टेयरिङ र एलाइनमेन्ट नियन्त्रण गर्न`
+        ]
+      },
+      correctIndex: 0
+    });
+
+    // Failing indicator question
+    list.push({
+      id: `gen_comp_fail_${compIndex}`,
+      category: 'driving_knowledge',
+      questionText: {
+        en: `What is a common mechanical symptom of a worn or malfunctioning ${comp.nameEn}?`,
+        ne: `सवारी साधनमा ${comp.nameNe} बिग्रिएमा वा काम नगरेमा देखा पर्ने सामान्य लक्षण के हो?`
+      },
+      options: {
+        en: [
+          `Decreased system efficiency and unusual noises or warnings`,
+          `Immediate complete failure of the steering system`,
+          `Siren sounds starting automatically`,
+          `Windshield wipers turning on randomly`
+        ],
+        ne: [
+          `प्रणालीको दक्षतामा ह्रास आउने र असामान्य आवाज वा चेतावनी देखा पर्ने`,
+          `स्टेयरिङ प्रणाली तुरुन्तै पूर्ण रूपमा ठप्प हुने`,
+          `आपतकालीन साइरन स्वतः बज्न सुरु हुने`,
+          `विन्डशिल्ड वाइपरहरू बिना कारण चल्न थाल्ने`
+        ]
+      },
+      correctIndex: 0
+    });
+  });
+
+  // --- SUB-GENERATOR 6: Tire aspects ---
+  const tireAspects = [
+    { aspectEn: 'dangerously over-inflated tires', aspectNe: 'अत्यधिक हावा भरिएको टायरहरू', riskEn: 'Bumpy rigid ride, premature center tread wear, and risk of tire blowout', riskNe: 'सवारी कडा र उफ्रने हुने, टायरको बीच भाग चाँडै खिइने र पड्किने जोखिम' },
+    { aspectEn: 'severely under-inflated tires', aspectNe: 'हावाको चाप धेरै कम भएको टायरहरू', riskEn: 'Increased fuel consumption, tire sidewall overheating, and outer edge wear', riskNe: 'इन्धन खपत बढी हुने, टायरको भित्री भाग तातो हुने र बाहिरी छेउ खिइने' },
+    { aspectEn: 'improperly balanced tires or bad alignment', aspectNe: 'ह्विल एलाइनमेन्ट वा ह्विल ब्यालेन्सिङ नमिलेको टायरहरू', riskEn: 'Steering wheel vibrations at high speed and uneven patchy tread wear', riskNe: 'उच्च गतिमा स्टेयरिङ कम्पन हुने र टायरको कतिपय ठाउँ असमान रूपमा खिइने' },
+    { aspectEn: 'tires with bulging bubbles on the sidewall', aspectNe: 'टायरको भित्ता सुन्निएको वा फोका उठेको अवस्था', riskEn: 'Severe internal structure damage and extreme risk of immediate tire blowout', riskNe: 'टायरको भित्री बलियो संरचना बिग्रिएको र गुडिरहेको बेला पड्किने अत्यधिक जोखिम' },
+    { aspectEn: 'completely bald tires with no tread depth', aspectNe: 'थ्रेड नभएको चिल्लो घिसिएको टायरहरू', riskEn: 'Extremely high risk of skidding, poor braking grip, and aquaplaning', riskNe: 'चिप्लने, ब्रेक नलाग्ने र पानीमा अनियन्त्रित भई तैरिने अत्यधिक जोखिम' }
+  ];
+
+  tireAspects.forEach((t, tIndex) => {
+    list.push({
+      id: `gen_tire_aspect_${tIndex}`,
+      category: 'driving_knowledge',
+      questionText: {
+        en: `What is the major safety hazard associated with driving a vehicle with ${t.aspectEn}?`,
+        ne: `${t.aspectNe} भएको सवारी साधन चलाउँदा कुन मुख्य सुरक्षा जोखिम उत्पन्न हुन्छ?`
+      },
+      options: {
+        en: [
+          `${t.riskEn}`,
+          `The exhaust will start blowing green smoke`,
+          `The headlights will automatically turn off`,
+          `The horn volume will decrease significantly`
+        ],
+        ne: [
+          `${t.riskNe}`,
+          `साइलेन्सरबाट हरियो धुवाँ आउन थाल्नेछ`,
+          `हेडलाइटहरू स्वतः बन्द हुनेछन्`,
+          `हर्नको आवाज निकै सानो हुनेछ`
+        ]
+      },
+      correctIndex: 0
+    });
+  });
+
+  // --- SUB-GENERATOR 7: Vehicle & Weather (120 Questions) ---
+  const vehiclesCombo1 = [
+    { en: 'scooter', ne: 'स्कूटर' },
+    { en: 'electric car', ne: 'इलेक्ट्रिक कार' },
+    { en: 'public bus', ne: 'सार्वजनिक बस' },
+    { en: 'cargo truck', ne: 'सामान बोक्ने ट्रक' },
+    { en: 'auto rickshaw', ne: 'अटो रिक्सा' },
+    { en: 'private taxi', ne: 'निजी ट्याक्सी' },
+    { en: 'farm tractor', ne: 'कृषि ट्याक्टर' },
+    { en: 'ambulance', ne: 'एम्बुलेन्स' },
+    { en: 'microbus', ne: 'माइक्रोबस' },
+    { en: 'delivery van', ne: 'डेलिभरी भ्यान' },
+    { en: 'motorcycle', ne: 'मोटरसाइकल' },
+    { en: 'tipper truck', ne: 'टिपर ट्रक' }
+  ];
+
+  const conditionsCombo1 = [
+    {
+      en: 'heavy rainy road with deep water puddles',
+      ne: 'भारी वर्षा भई सडकमा पानी जमेको अवस्था',
+      tipEn: 'Drive slowly to avoid aquaplaning and check brakes immediately after passing through water',
+      tipNe: 'एक्वाप्लेनिङबाट बच्न बिस्तारै चलाउने र पानी तरेपछि ब्रेक तुरुन्तै जाँच गर्ने'
+    },
+    {
+      en: 'dense morning fog with low visibility',
+      ne: 'बिहानको बाक्लो कुहिरो र हुस्सु लागेर बाटो नदेखिएको अवस्था',
+      tipEn: 'Turn on low beam headlights and fog lights, reduce speed, and use lane markings to guide you',
+      tipNe: 'लो बीम हेडलाइट र फग लाइट बाल्ने, गति कम गर्ने र लेनको रेखा पछ्याएर चलाउने'
+    },
+    {
+      en: 'steep mountain uphill curves',
+      ne: 'तीव्र पहाडी उकालो घुम्तीहरू',
+      tipEn: 'Use low gear to maintain constant engine power and sound horn on blind curves',
+      tipNe: 'इन्जिनको शक्ति कायम राख्न सानो गियर प्रयोग गर्ने र ओझेल घुम्तीमा हर्न बजाउने'
+    },
+    {
+      en: 'steep downhill mountain slopes',
+      ne: 'भिरालो पहाडी ओरालो सडक खण्ड',
+      tipEn: 'Use low gear for engine braking to avoid brake overheating, and never drive in neutral',
+      tipNe: 'ब्रेक बढी तात्न नदिन इन्जिन ब्रेकिङका लागि साना गियरहरू प्रयोग गर्ने, न्यूट्रलमा कहिल्यै नचलाउने'
+    },
+    {
+      en: 'dark night driving with oncoming high beams',
+      ne: 'राति विपरित दिशाबाट आउने गाडीले ठूलो बत्ती बालेको अवस्था',
+      tipEn: 'Look slightly towards the left edge of your lane, reduce speed, and do not flash high beams in retaliation',
+      tipNe: 'आफ्नो लेनको बायाँ छेउको सेतो रेखामा ध्यान दिने, गति कम गर्ने र रिसमा ठूलो बत्ती नबाल्ने'
+    },
+    {
+      en: 'loose gravel roads under maintenance',
+      ne: 'मर्मत भइरहेको रोडा र ढुङ्गा छरिएको कच्ची बाटो',
+      tipEn: 'Maintain a slow speed, avoid sudden sharp braking, and increase following distance',
+      tipNe: 'गति कम राख्ने, अचानक कडा ब्रेक नलगाउने र अगाडिको गाडीसँगको सुरक्षित दूरी बढाउने'
+    },
+    {
+      en: 'strong gusty winds on an open highway bridge',
+      ne: 'खुल्ला राजमार्गको पुलमा तीव्र हावाहुरी चलिरहेको अवस्था',
+      tipEn: 'Hold the steering wheel firmly with both hands and decrease speed to counter crosswinds',
+      tipNe: 'स्टेयरिङ ह्विल दुवै हातले बलियोसँग समात्ने र नियन्त्रण राख्न गति कम गर्ने'
+    },
+    {
+      en: 'crowded school zone during school hours',
+      ne: 'विद्यालय सुरु हुने वा छुट्टी हुने समयको विद्यालय क्षेत्र',
+      tipEn: 'Drive at maximum 20 km/h speed limit and watch out for children crossing unexpectedly',
+      tipNe: 'अधिकतम २० किमी/घण्टाको गतिमा मात्र चलाउने र अचानक सडकमा आउने बालबालिकाप्रति सजग रहने'
+    },
+    {
+      en: 'entering a long unlit highway tunnel',
+      ne: 'लामो र बत्ती नभएको राजमार्ग सुरुङ्ग मार्ग भित्र',
+      tipEn: 'Turn on headlights prior to entering, maintain a steady speed, and do not attempt to overtake',
+      tipNe: 'सुरुङ्गमा छिर्नु अगावै हेडलाइट बाल्ने, गति स्थिर राख्ने र ओभरटेक गर्ने प्रयास नगर्ने'
+    },
+    {
+      en: 'heavy dusty gravel village road',
+      ne: 'अत्यधिक धुलो उडिरहेको ग्रामीण कच्ची बाटो',
+      tipEn: 'Roll up windows, turn on headlights or hazard lights for visibility, and increase safe gap',
+      tipNe: 'झ्यालका सिसाहरू उठाउने, उज्यालोका लागि हेडलाइट बाल्ने र दुई गाडीबीचको दूरी बढाउने'
+    }
+  ];
+
+  vehiclesCombo1.forEach((v, vIndex) => {
+    conditionsCombo1.forEach((cond, cIndex) => {
+      list.push({
+        id: `gen_weather_${vIndex}_${cIndex}`,
+        category: 'road_safety',
+        questionText: {
+          en: `When driving ${v.en} in a situation with ${cond.en}, what is the correct safety precaution?`,
+          ne: `${cond.ne} मा ${v.ne} चलाउँदा अपनाउनुपर्ने सबैभन्दा सही सुरक्षा सावधानी के हो?`
+        },
+        options: {
+          en: [
+            `${cond.tipEn}`,
+            `Accelerate to the maximum limit to cross quickly`,
+            `Turn off all headlights and switch to neutral gear`,
+            `Sound the horn continuously to warn everyone`
+          ],
+          ne: [
+            `${cond.tipNe}`,
+            `छिट्टै पार गर्न अधिकतम गतिमा सवारी हुइँक्याउने`,
+            `सबै हेडलाइट बन्द गर्ने र न्यूट्रल गियरमा गुडाउने`,
+            `सबैलाई सचेत गराउन लगातार हर्न बजाइरहने`
+          ]
+        },
+        correctIndex: 0
+      });
+    });
+  });
+
+  // --- SUB-GENERATOR 8: Vehicle & Dashboard (120 Questions) ---
+  const vehiclesCombo2 = [
+    { en: 'motorcycle', ne: 'मोटरसाइकल' },
+    { en: 'private car', ne: 'निजी कार' },
+    { en: 'public bus', ne: 'सार्वजनिक बस' },
+    { en: 'cargo truck', ne: 'सामान बोक्ने ट्रक' },
+    { en: 'auto rickshaw', ne: 'अटो रिक्सा' },
+    { en: 'private taxi', ne: 'निजी ट्याक्सी' },
+    { en: 'farm tractor', ne: 'कृषि ट्याक्टर' },
+    { en: 'ambulance', ne: 'एम्बुलेन्स' },
+    { en: 'microbus', ne: 'माइक्रोबस' },
+    { en: 'delivery van', ne: 'डेलिभरी भ्यान' }
+  ];
+
+  const indicatorsCombo2 = [
+    { nameEn: 'Engine Oil Pressure Light', nameNe: 'इन्जिन आयल प्रेसर चेतावनी लाइट', actionEn: 'Pull over safely immediately, turn off the engine, and check the engine oil level', actionNe: 'तुरुन्तै सुरक्षित स्थानमा रोकेर इन्जिन बन्द गर्ने र इन्जिन आयलको स्तर जाँच गर्ने' },
+    { nameEn: 'Engine Overheating Light', nameNe: 'इन्जिन बढी तातेको चेतावनी लाइट', actionEn: 'Stop the vehicle, let engine idle to cool down, check coolant, and never open hot radiator cap', actionNe: 'गाडी रोक्ने, इन्जिनलाई चिसो हुन दिने, कुलान्ट जाँच गर्ने तर तातो रेडिएटर क्याप कहिल्यै नखोल्ने' },
+    { nameEn: 'Battery Charging Failure Light', nameNe: 'ब्याट्री चार्जिंग असफल चेतावनी लाइट', actionEn: 'Turn off all unnecessary electrical electronics and drive directly to the nearest workshop', actionNe: 'अनावश्यक सबै विद्युतीय उपकरण बन्द गर्ने र सिधै नजिकैको मर्मत केन्द्रमा लैजाने' },
+    { nameEn: 'Brake Failure Warning Light', nameNe: 'ब्रेक प्रणाली खराबी चेतावनी लाइट', actionEn: 'Slow down carefully using gears, pull over to a safe area, check fluid, and call for help', actionNe: 'गियरको मद्दतले सावधानीपूर्वक गति कम गर्ने, गाडी रोक्ने, ब्रेक फ्लुइड जाँच गर्ने र प्राविधिक सहयोग माग्ने' },
+    { nameEn: 'Low Fuel Warning Light', nameNe: 'कम इन्धनको चेतावनी लाइट', actionEn: 'Drive to the nearest refueling station and fill fuel immediately to avoid airlocks', actionNe: 'नजिकैको पेट्रोल पम्पमा गएर तुरुन्तै इन्धन भर्ने ताकि इन्जिनमा एयरलक नहोस्' },
+    { nameEn: 'Tire Pressure Warning Light', nameNe: 'Tire Pressure Warning Light', actionEn: 'Check pressure in all tires at a safe stop and inflate to the recommended specification', actionNe: 'सुरक्षित स्थानमा रोकेर सबै टायरको हावा जाँच गर्ने र तोकिएको मापदण्डमा हावा भर्ने' },
+    { nameEn: 'Check Engine Warning Light', nameNe: 'चेक इन्जिन चेतावनी लाइट', actionEn: 'Schedule a visit to a professional workshop soon for standard computer OBD diagnosis', actionNe: 'चाडै नै मर्मत केन्द्रमा लगेर इन्जिनको कम्प्युटर जाँच गराई खराबी पत्ता लगाउने' },
+    { nameEn: 'ABS Warning Light', nameNe: 'एबीएस (ABS) प्रणाली खराबी चेतावनी लाइट', actionEn: 'Note that standard braking works but safety ABS anti-lock system is inactive; seek repair soon', actionNe: 'याद राख्ने कि सामान्य ब्रेकले काम गर्छ तर आपतकालीन एबीएस चल्दैन; त्यसैले चाँडै मर्मत गराउने' },
+    { nameEn: 'Airbag Malfunction Light', nameNe: 'एयरब्याग खराबी चेतावनी लाइट', actionEn: 'Have the vehicle serviced soon as airbags may not deploy during a collision', actionNe: 'सुरक्षा जाँच गराउने किनभने दुर्घटना हुँदा एयरब्याग सुरक्षा प्रणाली नखुल्न सक्छ' },
+    { nameEn: 'Seatbelt Warning Light', nameNe: 'सिट बेल्ट नलगाएको चेतावनी लाइट', actionEn: 'Fasten your seatbelt immediately and ensure all passengers do the same', actionNe: 'तुरुन्तै आफ्नो सिट बेल्ट बाँध्ने र सवारीमा सवार सबै यात्रुलाई पनि बाँध्न लगाउने' },
+    { nameEn: 'High Beam Headlight Indicator', nameNe: 'ठूलो हेडलाइट सूचक लाइट', actionEn: 'Toggle to low beam when oncoming vehicles or pedestrians are in front', actionNe: 'विपरित दिशाबाट सवारी साधन वा मानिसहरू आइरहेको बेला लो बीम (सानो बत्ती) मा झार्ने' },
+    { nameEn: 'Hazard Lights Warning Indicator', nameNe: 'हाजार्ड (आपतकालीन) बत्ती सूचक लाइट', actionEn: 'Use only when broken down, during emergency stops, or in severe hazard conditions', actionNe: 'आपतकालीन अवस्थामा, सडकमा गाडी बिग्रिएमा वा गम्भीर जोखिमको बेला मात्र प्रयोग गर्ने' }
+  ];
+
+  vehiclesCombo2.forEach((v, vIndex) => {
+    indicatorsCombo2.forEach((ind, iIndex) => {
+      list.push({
+        id: `gen_dash_${vIndex}_${iIndex}`,
+        category: 'driving_knowledge',
+        questionText: {
+          en: `If you are driving ${v.en} and the ${ind.nameEn} lights up on the dashboard, what is the best response?`,
+          ne: `यदि तपाईं ${v.ne} चलाइरहनुभएको छ र ड्यासबोर्डमा ${ind.nameNe} बलेमा गर्नुपर्ने सबैभन्दा सही निर्णय के हो?`
+        },
+        options: {
+          en: [
+            `${ind.actionEn}`,
+            `Increase vehicle speed to clear the fault`,
+            `Ignore the warning light completely as it is minor`,
+            `Sound the horn loudly and keep driving normally`
+          ],
+          ne: [
+            `${ind.actionNe}`,
+            `चेतावनी हटाउन सवारी साधनको गति झन् बढाउने`,
+            `यस्ता साना चेतावनीलाई पूर्ण रूपमा बेवास्ता गरेर चलाइरहने`,
+            `ठूलो आवाजमा हर्न बजाउने र सामान्य जस्तै चलाइरहने`
+          ]
+        },
+        correctIndex: 0
+      });
+    });
+  });
+
+  // --- SUB-GENERATOR 9: Vehicle & Fine (80 Questions) ---
+  const vehiclesCombo3 = [
+    { en: 'motorcycle', ne: 'मोटरसाइकल' },
+    { en: 'private car', ne: 'निजी कार' },
+    { en: 'public bus', ne: 'सार्वजनिक बस' },
+    { en: 'tipper truck', ne: 'टिपर ट्रक' },
+    { en: 'scooter', ne: 'स्कूटर' },
+    { en: 'tractor', ne: 'ट्याक्टर' },
+    { en: 'tempo', ne: 'टेम्पो' },
+    { en: 'microbus', ne: 'माइक्रोबस' }
+  ];
+
+  const violationsCombo3 = [
+    { nameEn: 'driving without a valid license', nameNe: 'चालक अनुमति पत्र (लाइसेन्स) बिना चलाएको', penaltyEn: 'Fine of 1000 to 1500 Rupees', penaltyNe: 'रु. १००० देखि १५०० सम्म जरिवाना' },
+    { nameEn: 'driving under influence of alcohol (MAPASE)', nameNe: 'मादक पदार्थ सेवन (मापसे) गरेर चलाएको', penaltyEn: 'Fine of 1000 Rupees, license marking, and mandatory 1-hour traffic class', penaltyNe: 'रु. १००० जरिवाना र १ घण्टाको अनिवार्य ट्राफिक सचेतना कक्षा' },
+    { nameEn: 'violating red traffic light signals', nameNe: 'रातो ट्राफिक संकेत बत्तीको उल्लंघन गरेको', penaltyEn: 'Fine of 500 to 1500 Rupees and progress points deducted', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना र रेकर्डमा गल्ती रेकर्ड' },
+    { nameEn: 'using a mobile phone while driving', nameNe: 'सवारी चलाइरहेको बेला mobile phone प्रयोग गरेको', penaltyEn: 'Fine of 500 to 1500 Rupees', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना' },
+    { nameEn: 'driving the wrong way in a one-way street', nameNe: 'एकतर्फी (वान-वे) सडकमा गलत दिशाबाट चलाएको', penaltyEn: 'Fine of 500 to 1500 Rupees', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना' },
+    { nameEn: 'exceeding speed limit in residential zones', nameNe: 'आवासीय क्षेत्रमा तोकिएको गति सीमा भन्दा बढी तीव्र गतिमा चलाएको', penaltyEn: 'Fine of 500 to 1500 Rupees', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना' },
+    { nameEn: 'parking in a designated No Parking zone', nameNe: 'नो पार्किङ (पार्किङ निषेध) तोकिएको क्षेत्रमा पार्किङ गरेको', penaltyEn: 'Fine of 500 to 1500 Rupees and wheel locking or towing', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना र ह्विल लक वा गाडी उठाइने' },
+    { nameEn: 'refusing to present bluebook/documents to traffic police', nameNe: 'ट्राफिक प्रहरीले जाँच गर्दा कागजात वा ब्लूबुक देखाउन इन्कार गरेको', penaltyEn: 'Fine of 500 to 1500 Rupees', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना' },
+    { nameEn: 'carrying passengers on the roof or cargo area', nameNe: 'छतमा वा सामान लोड गर्ने भागमा यात्रु चढाएको', penaltyEn: 'Fine of 500 to 1500 Rupees and immediate removal of passengers', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना र यात्रुलाई तुरुन्त ओराल्नुपर्ने' },
+    { nameEn: 'driving with expired registration bluebook', nameNe: 'नवीकरण म्याद नाघेको ब्लूबुक (सवारी दर्ता किताब) राखेर चलाएको', penaltyEn: 'Fine of 500 to 1500 Rupees and regular tax penalties', penaltyNe: 'रु. ५०० देखि १५०० सम्म जरिवाना र नियमित सवारी करको जरिवाना' }
+  ];
+
+  vehiclesCombo3.forEach((v, vIndex) => {
+    violationsCombo3.forEach((viol, viIndex) => {
+      list.push({
+        id: `gen_fine_${vIndex}_${viIndex}`,
+        category: 'traffic_rules',
+        questionText: {
+          en: `If a driver of ${v.en} is penalized for ${viol.nameEn} in Nepal, what is the standard penalty?`,
+          ne: `नेपालमा ${v.ne} चलाउँदा ${viol.nameNe} कसूरमा ट्राफिक प्रहरीले कस्तो सजाय वा जरिवाना गर्दछ?`
+        },
+        options: {
+          en: [
+            `${viol.penaltyEn}`,
+            `Permanent cancellation of driving license`,
+            `Jail sentence of up to 6 months`,
+            `Confiscation of the vehicle permanently`
+          ],
+          ne: [
+            `${viol.penaltyNe}`,
+            `सवारी चालक अनुमति पत्र स्थायी रूपमा खारेज`,
+            `६ महिना सम्मको जेल सजाय`,
+            `सवारी साधन स्थायी रूपमा जफत`
+          ]
+        },
+        correctIndex: 0
+      });
+    });
+  });
+
+  return list;
+}
+
+// Push generated questions to the QUESTIONS_DATABASE
+QUESTIONS_DATABASE.push(...generateDynamicQuestions());
+
 /**
  * Shuffles an array of items randomly.
  */
